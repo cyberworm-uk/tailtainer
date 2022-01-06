@@ -10,6 +10,7 @@ podman run -d \
   --rm \
   --name tailscaled \
   --hostname $HOSTNAME \
+  --label "io.containers.autoupdate=registry" \
   --volume tailscaled-state:/var/lib/tailscale \
   --device /dev/net/tun \
   --network host \
