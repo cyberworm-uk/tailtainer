@@ -14,7 +14,7 @@ podman run -d \
   --volume tailscaled-state:/var/lib/tailscale \
   --device /dev/net/tun \
   --network host \
-  --cap-add net_admin,net_raw \
+  --privileged `#Highway To The Danger Zone! You could also try --cap-add net_admin,net_raw` \
   ghcr.io/guest42069/tailscale:latest tailscaled --state /var/lib/tailscale/tailscaled.state
 (cd /etc/systemd/system && podman generate systemd --new --name --files tailscaled) && systemctl enable --now container-tailscaled
 podman exec tailscaled tailscale up
