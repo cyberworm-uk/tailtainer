@@ -12,6 +12,7 @@ podman run -d \
   --hostname $HOSTNAME \
   --label "io.containers.autoupdate=registry" \
   --volume tailscaled-state:/var/lib/tailscale \
+  --volume /lib/modules:/lib/modules:ro \
   --device /dev/net/tun \
   --network host \
   --privileged `#Highway To The Danger Zone! You could also try --cap-add net_admin,net_raw` \
