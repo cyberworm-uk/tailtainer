@@ -1,6 +1,6 @@
 FROM docker.io/alpine/git:latest AS source
 WORKDIR /go/src
-ARG VERSION=release-branch/1.20
+ARG VERSION=release-branch/1.22
 RUN git clone --depth=1 -b ${VERSION} https://github.com/tailscale/tailscale.git .
 WORKDIR /go/src
 RUN git checkout ${VERSION}
