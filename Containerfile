@@ -6,12 +6,12 @@ WORKDIR /go/src
 RUN git checkout ${VERSION}
 RUN ./build_dist.sh shellvars > ./shellvars
 
-FROM docker.io/library/golang:1.17-alpine AS build
+FROM docker.io/library/golang:1.18-alpine AS build
 COPY --from=source /go/src /go/src
 WORKDIR /go/src
 RUN go mod download
-RUN source /go/src/shellvars && CGO_ENABLED=0 go build -ldflags "-X tailscale.com/version.Long=$VERSION_LONG -X tailscale.com/version.Short=$VERSION_SHORT -X tailscale.com/version.GitCommit=$VERSION_GIT_HASH -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/tailscale ./cmd/tailscale
-RUN source /go/src/shellvars && CGO_ENABLED=0 go build -ldflags "-X tailscale.com/version.Long=$VERSION_LONG -X tailscale.com/version.Short=$VERSION_SHORT -X tailscale.com/version.GitCommit=$VERSION_GIT_HASH -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/tailscaled ./cmd/tailscaled
+RUN source /go/src/shellvars && CGO_ENABLED=0 go build -buildvcs=false -ldflags "-X tailscale.com/version.Long=$VERSION_LONG -X tailscale.com/version.Short=$VERSION_SHORT -X tailscale.com/version.GitCommit=$VERSION_GIT_HASH -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/tailscale ./cmd/tailscale
+RUN source /go/src/shellvars && CGO_ENABLED=0 go build -buildvcs=false -ldflags "-X tailscale.com/version.Long=$VERSION_LONG -X tailscale.com/version.Short=$VERSION_SHORT -X tailscale.com/version.GitCommit=$VERSION_GIT_HASH -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/tailscaled ./cmd/tailscaled
 
 FROM docker.io/library/alpine:latest
 COPY --from=build /go/bin/* /usr/local/bin/
