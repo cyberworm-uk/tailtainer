@@ -15,5 +15,7 @@ RUN source /go/src/shellvars && CGO_ENABLED=0 go build -buildvcs=false -ldflags 
 
 FROM docker.io/library/alpine:latest
 COPY --from=build /go/bin/* /usr/local/bin/
+COPY --from=source /go/src/docs/k8s/run.sh /
 RUN apk -U --no-cache upgrade
 RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables
+ENTRYPOINT [ "/bin/sh", "/run.sh" ]
