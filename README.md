@@ -22,7 +22,7 @@ podman run -d \
   --privileged `#Highway To The Danger Zone! You could also try --cap-add net_admin,net_raw` \
   ghcr.io/guest42069/tailscale:latest
 (cd /etc/systemd/system && podman generate systemd --new --name --files tailscaled) && systemctl enable --now container-tailscaled
-podman exec tailscaled tailscale up
-# ... authenticate via provided link ...
+podman logs tailscaled
+# ... authenticate via provided link in the logs ...
 podman exec tailscaled tailscale status
 ```
