@@ -17,4 +17,4 @@ COPY --from=build /go/bin/* /usr/local/bin/
 COPY --from=source /go/src/docs/k8s/run.sh /
 RUN apk -U --no-cache upgrade
 RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables
-CMD [ "/run.sh" ]
+CMD [ "/bin/sh", "/run.sh" ]
