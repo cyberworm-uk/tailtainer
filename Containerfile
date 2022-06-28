@@ -2,9 +2,8 @@ FROM docker.io/alpine/git:latest AS source
 WORKDIR /go/src
 ARG VERSION=release-branch/1.26
 RUN git clone --depth=1 -b ${VERSION} https://github.com/tailscale/tailscale.git .
-WORKDIR /go/src
 RUN git checkout ${VERSION}
-RUN ./build_dist.sh shellvars > ./shellvars
+RUN ./build_dist.sh shellvars > shellvars
 
 FROM docker.io/library/golang:1.18-alpine AS build
 COPY --from=source /go/src /go/src
@@ -18,4 +17,4 @@ COPY --from=build /go/bin/* /usr/local/bin/
 COPY --from=source /go/src/docs/k8s/run.sh /
 RUN apk -U --no-cache upgrade
 RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables
-CMD [ "/bin/sh", "/run.sh" ]
+CMD [ "/run.sh" ]
