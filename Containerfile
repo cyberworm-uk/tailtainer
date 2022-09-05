@@ -5,7 +5,7 @@ RUN git clone --depth=1 -b ${VERSION} https://github.com/tailscale/tailscale.git
 RUN git checkout ${VERSION}
 RUN ./build_dist.sh shellvars > shellvars
 
-FROM docker.io/library/golang:1.18-alpine AS build
+FROM docker.io/library/golang:1.19-alpine AS build
 COPY --from=source /go/src /go/src
 WORKDIR /go/src
 RUN go mod download
