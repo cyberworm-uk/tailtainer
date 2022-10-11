@@ -24,5 +24,5 @@ podman run -d \
 (cd /etc/systemd/system && podman generate systemd --new --name --files tailscaled) && systemctl enable --now container-tailscaled
 podman logs tailscaled
 # ... authenticate via provided link in the logs ...
-podman exec tailscaled tailscale status
+podman exec tailscaled tailscale --socket=/tmp/tailscaled.sock status
 ```
