@@ -16,5 +16,5 @@ FROM docker.io/library/alpine:latest
 COPY --from=build /go/bin/* /usr/local/bin/
 COPY --from=source /go/src/docs/k8s/run.sh /
 RUN apk -U --no-cache upgrade
-RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables
+RUN apk add --no-cache ca-certificates nftables iproute2 ip6tables
 CMD [ "/bin/sh", "/run.sh" ]
