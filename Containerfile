@@ -16,5 +16,6 @@ FROM docker.io/library/alpine:latest
 COPY --from=build /go/bin/* /usr/local/bin/
 COPY --from=source /go/src/docs/k8s/run.sh /
 RUN apk -U --no-cache upgrade
-RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables
+RUN apk add --no-cache ca-certificates nftables iproute2
+RUN rm /sbin/iptables;rm /sbin/iptables-save;rm /sbin/iptables-restore;rm /sbin/ip6tables;rm /sbin/ip6tables-save;rm /sbin/ip6tables-restore;ln -s /sbin/xtables-nft-multi /sbin/iptables && ln -s /sbin/xtables-nft-multi /sbin/iptables-save && ln -s /sbin/xtables-nft-multi /sbin/iptables-restore && ln -s /sbin/xtables-nft-multi /sbin/ip6tables && ln -s /sbin/xtables-nft-multi /sbin/ip6tables-save && ln -s /sbin/xtables-nft-multi /sbin/ip6tables-restore
 CMD [ "/bin/sh", "/run.sh" ]
