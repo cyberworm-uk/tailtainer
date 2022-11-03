@@ -9,13 +9,12 @@ FROM docker.io/library/golang:1.19-alpine AS build
 COPY --from=source /go/src /go/src
 WORKDIR /go/src
 RUN go mod download
-RUN source /go/src/shellvars && CGO_ENABLED=0 go build -buildvcs=false -ldflags "-X tailscale.com/version.Long=$VERSION_LONG -X tailscale.com/version.Short=$VERSION_SHORT -X tailscale.com/version.GitCommit=$VERSION_GIT_HASH -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/tailscale ./cmd/tailscale
-RUN source /go/src/shellvars && CGO_ENABLED=0 go build -buildvcs=false -ldflags "-X tailscale.com/version.Long=$VERSION_LONG -X tailscale.com/version.Short=$VERSION_SHORT -X tailscale.com/version.GitCommit=$VERSION_GIT_HASH -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/tailscaled ./cmd/tailscaled
+RUN source /go/src/shellvars && CGO_ENABLED=0 go build -tags=ts_omit_aws -buildvcs=false -ldflags "-X tailscale.com/version.Long=$VERSION_LONG -X tailscale.com/version.Short=$VERSION_SHORT -X tailscale.com/version.GitCommit=$VERSION_GIT_HASH -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/tailscale ./cmd/tailscale
+RUN source /go/src/shellvars && CGO_ENABLED=0 go build -tags=ts_omit_aws -buildvcs=false -ldflags "-X tailscale.com/version.Long=$VERSION_LONG -X tailscale.com/version.Short=$VERSION_SHORT -X tailscale.com/version.GitCommit=$VERSION_GIT_HASH -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/tailscaled ./cmd/tailscaled
 
 FROM docker.io/library/alpine:latest
 COPY --from=build /go/bin/* /usr/local/bin/
 COPY --from=source /go/src/docs/k8s/run.sh /
 RUN apk -U --no-cache upgrade
-RUN apk add --no-cache ca-certificates nftables iproute2
-RUN rm /sbin/iptables;rm /sbin/iptables-save;rm /sbin/iptables-restore;rm /sbin/ip6tables;rm /sbin/ip6tables-save;rm /sbin/ip6tables-restore;ln -s /sbin/xtables-nft-multi /sbin/iptables && ln -s /sbin/xtables-nft-multi /sbin/iptables-save && ln -s /sbin/xtables-nft-multi /sbin/iptables-restore && ln -s /sbin/xtables-nft-multi /sbin/ip6tables && ln -s /sbin/xtables-nft-multi /sbin/ip6tables-save && ln -s /sbin/xtables-nft-multi /sbin/ip6tables-restore
+RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables
 CMD [ "/bin/sh", "/run.sh" ]
