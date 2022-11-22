@@ -35,3 +35,11 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.REGISTRY }}/${{ github.actor }}/tailscale:latest
+
+      - name: Build and push tailscale
+        uses: docker/build-push-action@v3
+        with:
+          file: ./Containerfile.nftables
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ github.actor }}/tailscale-nftables:latest
