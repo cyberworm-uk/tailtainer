@@ -31,7 +31,7 @@ jobs:
       - name: Build and push tailscale-binary
         uses: docker/build-push-action@v3
         with:
-          context: ./Containerfile.binary
+          file: ./Containerfile.binary
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.REGISTRY }}/${{ github.actor }}/tailscale-bin:latest
