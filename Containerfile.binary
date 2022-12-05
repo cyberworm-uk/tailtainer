@@ -1,6 +1,6 @@
 FROM docker.io/alpine/git:latest AS source
 WORKDIR /go/src
-ARG VERSION=release-branch/1.32
+ARG VERSION=release-branch/1.34
 RUN git clone --depth=1 -b ${VERSION} https://github.com/tailscale/tailscale.git .
 RUN git checkout ${VERSION}
 RUN ./build_dist.sh shellvars > shellvars
