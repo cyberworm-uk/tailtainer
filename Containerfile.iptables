@@ -2,8 +2,9 @@ FROM ghcr.io/guest42069/tailscale-bin:latest AS bin
 
 FROM docker.io/library/alpine:latest
 COPY --from=bin /tailscaled /usr/local/bin/
-COPY --from=bin /run.sh /
+COPY --from=bin /containerboot /usr/local/bin
 RUN apk -U --no-cache upgrade
 RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables
 RUN ln -s /usr/local/bin/tailscaled /usr/local/bin/tailscale
-CMD [ "/bin/sh", "/run.sh" ]
+RUN ln -s /usr/local/bin/containerboot /run.sh
+CMD [ "/usr/local/bin/containerboot" ]
