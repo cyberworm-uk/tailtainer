@@ -14,6 +14,7 @@ podman run -d \
   --hostname $HOSTNAME \
   --env TS_USERSPACE=false \
   --env TS_STATE_DIR=/var/lib/tailscale \
+  --env TS_SOCKET=/var/run/tailscale/tailscaled.sock \
   --label "io.containers.autoupdate=registry" \
   --volume tailscaled-state:/var/lib/tailscale \
   --volume /lib/modules:/lib/modules:ro \
@@ -24,5 +25,5 @@ podman run -d \
 (cd /etc/systemd/system && podman generate systemd --new --name --files tailscaled) && systemctl enable --now container-tailscaled
 podman logs tailscaled
 # ... authenticate via provided link in the logs ...
-podman exec tailscaled tailscale --socket=/tmp/tailscaled.sock status
+podman exec tailscaled tailscale status
 ```
