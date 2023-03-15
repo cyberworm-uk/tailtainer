@@ -5,8 +5,8 @@ WORKDIR /go/src
 RUN git clone --depth=1 -b ${VERSION} https://github.com/tailscale/tailscale.git . && git checkout ${VERSION}
 RUN ./build_dist.sh shellvars > shellvars
 RUN go mod download
-RUN source /go/src/shellvars && CGO_ENABLED=0 go build -tags=ts_omit_aws,ts_include_cli -buildvcs=false -ldflags "-X tailscale.com/version.Long=$VERSION_LONG -X tailscale.com/version.Short=$VERSION_SHORT -X tailscale.com/version.GitCommit=$VERSION_GIT_HASH -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/tailscaled ./cmd/tailscaled
-RUN source /go/src/shellvars && CGO_ENABLED=0 go build -tags=ts_omit_aws,ts_include_cli -buildvcs=false -ldflags "-X tailscale.com/version.Long=$VERSION_LONG -X tailscale.com/version.Short=$VERSION_SHORT -X tailscale.com/version.GitCommit=$VERSION_GIT_HASH -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/containerboot ./cmd/containerboot
+RUN source /go/src/shellvars && CGO_ENABLED=0 go build -tags=ts_omit_aws,ts_include_cli -buildvcs=false -ldflags "-X tailscale.com/version.longStamp=$VERSION_LONG -X tailscale.com/version.shortStamp=$VERSION_SHORT -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/tailscaled ./cmd/tailscaled
+RUN source /go/src/shellvars && CGO_ENABLED=0 go build -tags=ts_omit_aws,ts_include_cli -buildvcs=false -ldflags "-X tailscale.com/version.longStamp=$VERSION_LONG -X tailscale.com/version.shortStamp=$VERSION_SHORT -w -s -buildid=" -trimpath -buildmode=pie -o /go/bin/containerboot ./cmd/containerboot
 
 FROM scratch
 COPY --from=build /go/bin/tailscaled /
