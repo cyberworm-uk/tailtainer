@@ -1,5 +1,5 @@
 FROM docker.io/library/golang:alpine AS build
-ARG VERSION=release-branch/1.44
+ARG VERSION=release-branch/1.46
 RUN apk add --no-cache git
 WORKDIR /go/src
 RUN git clone --depth=1 -b ${VERSION} https://github.com/tailscale/tailscale.git . && git checkout ${VERSION}
