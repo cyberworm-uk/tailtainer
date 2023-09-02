@@ -1,13 +1,14 @@
 FROM --platform=$BUILDPLATFORM docker.io/library/golang:alpine AS build
 WORKDIR /go/src
 ARG VERSION=release-branch/1.48 TARGETOS TARGETARCH
+ENV GOOS="$TARGETOS" GOARCH="$TARGETARCH" GOFLAGS="-tags=ts_omit_aws,ts_include_cli -buildvcs=false -trimpath" CGO_ENABLED=0
 RUN apk add --no-cache git
 RUN git clone --depth=1 -b ${VERSION} https://github.com/tailscale/tailscale.git . && git checkout ${VERSION}
 RUN ./build_dist.sh shellvars > shellvars
 RUN --mount=type=cache,target=/go/pkg go mod download
-RUN --mount=type=cache,target=/go/pkg --mount=type=cache,target=/root/.cache/go-build source /go/src/shellvars && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -tags=ts_omit_aws,ts_include_cli -buildvcs=false -ldflags "-X tailscale.com/version.longStamp=$VERSION_LONG -X tailscale.com/version.shortStamp=$VERSION_SHORT -w -s -buildid=" -trimpath -o /go/bin/tailscaled ./cmd/tailscaled
-RUN --mount=type=cache,target=/go/pkg --mount=type=cache,target=/root/.cache/go-build source /go/src/shellvars && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -tags=ts_omit_aws,ts_include_cli -buildvcs=false -ldflags "-X tailscale.com/version.longStamp=$VERSION_LONG -X tailscale.com/version.shortStamp=$VERSION_SHORT -w -s -buildid=" -trimpath -o /go/bin/containerboot ./cmd/containerboot
+RUN --mount=type=cache,target=/go/pkg --mount=type=cache,target=/root/.cache/go-build source /go/src/shellvars && go build -ldflags "-X tailscale.com/version.longStamp=$VERSION_LONG -X tailscale.com/version.shortStamp=$VERSION_SHORT -w -s -buildid=" ./cmd/tailscaled
+RUN --mount=type=cache,target=/go/pkg --mount=type=cache,target=/root/.cache/go-build source /go/src/shellvars && go build -ldflags "-X tailscale.com/version.longStamp=$VERSION_LONG -X tailscale.com/version.shortStamp=$VERSION_SHORT -w -s -buildid=" ./cmd/containerboot
 
 FROM scratch
-COPY --from=build /go/bin/tailscaled /
-COPY --from=build /go/bin/containerboot /
+COPY --from=build /go/src/tailscaled /
+COPY --from=build /go/src/containerboot /
