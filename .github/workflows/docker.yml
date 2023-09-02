@@ -32,7 +32,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           file: ./Containerfile.binary
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7
           push: true
           tags: ${{ env.REGISTRY }}/${{ github.actor }}/tailscale-bin:latest
 
@@ -40,6 +40,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           file: ./Containerfile.alpine
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7
           push: true
           tags: ${{ env.REGISTRY }}/${{ github.actor }}/tailscale:latest
