@@ -9,6 +9,10 @@ RUN --mount=type=cache,target=/go/pkg go mod download
 RUN --mount=type=cache,target=/go/pkg --mount=type=cache,target=/root/.cache/go-build source /go/src/shellvars && go build -ldflags "-X tailscale.com/version.longStamp=$VERSION_LONG -X tailscale.com/version.shortStamp=$VERSION_SHORT -w -s -buildid=" ./cmd/tailscaled
 RUN --mount=type=cache,target=/go/pkg --mount=type=cache,target=/root/.cache/go-build source /go/src/shellvars && go build -ldflags "-X tailscale.com/version.longStamp=$VERSION_LONG -X tailscale.com/version.shortStamp=$VERSION_SHORT -w -s -buildid=" ./cmd/containerboot
 
-FROM scratch
-COPY --from=build /go/src/tailscaled /
-COPY --from=build /go/src/containerboot /
+FROM docker.io/library/alpine:latest
+COPY --from=build /go/src/tailscaled /usr/local/bin/
+COPY --from=build /go/src/containerboot /usr/local/bin/
+RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables iputils
+RUN ln -s /usr/local/bin/tailscaled /usr/local/bin/tailscale
+RUN ln -s /usr/local/bin/containerboot /run.sh
+CMD [ "/usr/local/bin/containerboot" ]
