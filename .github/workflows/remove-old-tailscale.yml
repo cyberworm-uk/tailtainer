@@ -14,3 +14,10 @@ jobs:
           min-versions-to-keep: 30
           delete-only-untagged-versions: 'true'
           token: ${{ secrets.PAT }}
+      - uses: actions/delete-package-versions@v4
+        with: 
+          package-name: 'tailscale-bin'
+          package-type: 'container'
+          min-versions-to-keep: 30
+          delete-only-untagged-versions: 'true'
+          token: ${{ secrets.PAT }}  
