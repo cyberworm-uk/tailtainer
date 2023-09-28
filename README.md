@@ -13,6 +13,7 @@ podman run -d \
   --env TS_USERSPACE=false \
   --env TS_STATE_DIR=/var/lib/tailscale \
   --env TS_SOCKET=/var/run/tailscale/tailscaled.sock \
+  --env TS_AUTH_ONCE=true \
   --label "io.containers.autoupdate=registry" \
   --volume tailscaled-state:/var/lib/tailscale \
   --volume /lib/modules:/lib/modules:ro \
