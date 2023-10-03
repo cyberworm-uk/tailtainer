@@ -18,7 +18,7 @@ podman run -d \
   --volume /lib/modules:/lib/modules:ro \
   --device /dev/net/tun \
   --network host \
-  --privileged `#Highway To The Danger Zone! You could also try --cap-add net_admin,net_raw` \
+  --cap-add=NET_ADMIN --cap-add=NET_RAW --cap-add=SYS_MODULE \
   ghcr.io/guest42069/tailscale:latest
 (cd /etc/systemd/system && podman generate systemd --new --name --files tailscaled) && systemctl enable --now container-tailscaled
 podman logs tailscaled
