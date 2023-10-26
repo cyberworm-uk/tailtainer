@@ -3,7 +3,7 @@
 
 This container is more or less the same as the [official image](https://hub.docker.com/r/tailscale/tailscale). As such you could change `ghcr.io/guest42069/tailscale:latest` to `docker.io/tailscale/tailscale:latest` in these instructions to use their provided container images.
 
-This image omits the AWS integrtion and builds the tailscale cli functionality into the tailscaled binary to shave a few MB off of the image size.
+This image builds the tailscale cli functionality into the tailscaled binary to shave a few bytes off of the image size. There is also a `-min` image that omits AWS, Bird, TAP and Kubernetes for a smaller more minimal image.
 
 Further configuration options are available though [environment variables](https://github.com/tailscale/tailscale/blob/v1.50.1/cmd/containerboot/main.go#L6-L52)
 
