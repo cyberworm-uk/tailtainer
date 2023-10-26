@@ -1,18 +1,25 @@
 # tailtainer
-Tailscale Container Build
+[Tailscale](https://tailscale.com/) Container Build
 
-e.g.
+This container is more or less the same as the [official image](https://hub.docker.com/r/tailscale/tailscale). As such you could change `ghcr.io/guest42069/tailscale:latest` to `docker.io/tailscale/tailscale:latest` in these instructions to use their provided container images.
+
+This image omits the AWS integrtion and builds the tailscale cli functionality into the tailscaled binary to shave a few MB off of the image size.
+
+Further configuration options are available though [environment variables](https://github.com/tailscale/tailscale/blob/v1.50.1/cmd/containerboot/main.go#L6-L52)
+
+## Examples
+
+### podman run ... / docker run ...
 ```bash
 podman volume create tailscaled-state
-# for further --env flags check out https://github.com/tailscale/tailscale/blob/main/docs/k8s/run.sh
-# e.g. `--env TS_ROUTES=10.0.0.0/24` will advertise routing for the specified subnet.
 podman run -d \
   --rm \
   --name tailscaled \
-  --hostname $HOSTNAME \
   --env TS_USERSPACE=false \
   --env TS_STATE_DIR=/var/lib/tailscale \
   --env TS_SOCKET=/var/run/tailscale/tailscaled.sock \
+  --env TS_AUTH_ONCE=true \
+  --env TS_ACCEPT_DNS=true \
   --label "io.containers.autoupdate=registry" \
   --volume tailscaled-state:/var/lib/tailscale \
   --volume /lib/modules:/lib/modules:ro \
@@ -26,7 +33,12 @@ podman logs tailscaled
 podman exec tailscaled tailscale status
 ```
 
-## [quadlets](https://www.redhat.com/sysadmin/quadlet-podman)
+### [quadlets](https://www.redhat.com/sysadmin/quadlet-podman)
+
+Quadlet's are functionally equivalent to `podman generate systemd ...` but the idea is to have a plugin to systemd to generate `.service` units from configuration files.
+This means that in future if better ways of managing containers occur, or preferred defaults change, the `.service` files don't need to be regenerated manually.
+
+In the below case, creating these files would result in the creation of `tailscaled.service` and `tailscaled-volume.service` which when run will create the `systemd-tailscaled` container and volume respectively.
 
 `/etc/container/systemd/tailscaled.container`
 ```.service
@@ -39,7 +51,7 @@ Image=ghcr.io/guest42069/tailscale:latest
 AutoUpdate=registry
 
 # storage and host resouces
-Volume=tailscaled-state.volume:/var/lib/tailscale
+Volume=tailscaled.volume:/var/lib/tailscale
 Volume=/lib/modules:/lib/modules:ro
 AddDevice=/dev/net/tun
 
@@ -50,8 +62,9 @@ Network=host
 # configuration
 Environment=TS_USERSPACE=false
 Environment=TS_STATE_DIR=/var/lib/tailscale
-Environment=TS_EXTRA_ARGS="--accept-routes --accept-dns"
 Environment=TS_SOCKET=/var/run/tailscale/tailscaled.sock
+Environment=TS_AUTH_ONCE=true
+Environment=TS_ACCEPT_DNS=true
 
 [Service]
 Restart=always
@@ -61,8 +74,10 @@ TimeoutStartSec=900
 WantedBy=multi-user.target
 ```
 
-`/etc/container/systemd/tailscaled-state.volume`
+`/etc/container/systemd/tailscaled.volume`
 ```.service
 [Volume]
 # This space intentionally left blank, to create a default volume.
 ```
+
+Once those files are in place, the associated `.service` units will be generated every time `systemctl daemon-reload` is called (e.g. on boot, or manually run if you've made changes).
