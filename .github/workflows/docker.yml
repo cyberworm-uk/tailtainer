@@ -36,7 +36,7 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ github.actor }}/tailscale:latest
 
-      - name: Build and push tailscale
+      - name: Build and push tailscale-min
         uses: docker/build-push-action@v3
         with:
           file: ./Containerfile.minimal
