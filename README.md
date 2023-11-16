@@ -22,10 +22,9 @@ podman run -d \
   --env TS_ACCEPT_DNS=true \
   --label "io.containers.autoupdate=registry" \
   --volume tailscaled-state:/var/lib/tailscale \
-  --volume /lib/modules:/lib/modules:ro \
   --device /dev/net/tun \
   --network host \
-  --cap-add=NET_ADMIN --cap-add=NET_RAW --cap-add=SYS_MODULE \
+  --cap-add=NET_ADMIN --cap-add=NET_RAW \
   ghcr.io/guest42069/tailscale:latest
 (cd /etc/systemd/system && podman generate systemd --new --name --files tailscaled) && systemctl enable --now container-tailscaled
 podman logs tailscaled
@@ -52,11 +51,10 @@ AutoUpdate=registry
 
 # storage and host resouces
 Volume=tailscaled.volume:/var/lib/tailscale
-Volume=/lib/modules:/lib/modules:ro
 AddDevice=/dev/net/tun
 
 # capabilities
-AddCapability=NET_RAW NET_ADMIN SYS_MODULE
+AddCapability=NET_RAW NET_ADMIN
 Network=host
 
 # configuration
