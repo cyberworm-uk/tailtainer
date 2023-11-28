@@ -1,7 +1,7 @@
 # tailtainer
 [Tailscale](https://tailscale.com/) Container Build
 
-This container is more or less the same as the [official image](https://hub.docker.com/r/tailscale/tailscale). As such you could change `ghcr.io/guest42069/tailscale:latest` to `docker.io/tailscale/tailscale:latest` in these instructions to use their provided container images.
+This container is more or less the same as the [official image](https://hub.docker.com/r/tailscale/tailscale). As such you could change `ghcr.io/cyberworm-uk/tailscale:latest` to `docker.io/tailscale/tailscale:latest` in these instructions to use their provided container images.
 
 This image builds the tailscale cli functionality into the tailscaled binary to shave a few bytes off of the image size. There is also a `-min` image that omits AWS, Bird, TAP and Kubernetes for a smaller more minimal image.
 
@@ -25,7 +25,7 @@ podman run -d \
   --device /dev/net/tun \
   --network host \
   --cap-add=NET_ADMIN --cap-add=NET_RAW \
-  ghcr.io/guest42069/tailscale:latest
+  ghcr.io/cyberworm-uk/tailscale:latest
 (cd /etc/systemd/system && podman generate systemd --new --name --files tailscaled) && systemctl enable --now container-tailscaled
 podman logs tailscaled
 # ... authenticate via provided link in the logs ...
@@ -46,7 +46,7 @@ Description=Tailscale container
 
 [Container]
 # image
-Image=ghcr.io/guest42069/tailscale:latest
+Image=ghcr.io/cyberworm-uk/tailscale:latest
 AutoUpdate=registry
 
 # storage and host resouces
