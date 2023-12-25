@@ -12,7 +12,5 @@ RUN --mount=type=cache,target=/go/pkg --mount=type=cache,target=/root/.cache/go-
 FROM ghcr.io/cyberworm-uk/base:latest
 COPY --from=build /go/src/tailscaled /usr/local/bin/
 COPY --from=build /go/src/containerboot /usr/local/bin/
-RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables iputils
-RUN ln -s /usr/local/bin/tailscaled /usr/local/bin/tailscale
-RUN ln -s /usr/local/bin/containerboot /run.sh
+RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables iputils && ln -s /usr/local/bin/tailscaled /usr/local/bin/tailscale && ln -s /usr/local/bin/containerboot /run.sh
 CMD [ "/usr/local/bin/containerboot" ]
