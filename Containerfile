@@ -1,6 +1,6 @@
 FROM --platform=$BUILDPLATFORM docker.io/library/golang:alpine AS build
 WORKDIR /go/src
-ARG VERSION=release-branch/1.68 TARGETOS TARGETARCH
+ARG VERSION=release-branch/1.70 TARGETOS TARGETARCH
 ENV GOOS="$TARGETOS" GOARCH="$TARGETARCH" GOFLAGS="-tags=ts_include_cli -buildvcs=false -trimpath"
 RUN apk add --no-cache git
 RUN git clone --depth=1 -b ${VERSION} https://github.com/tailscale/tailscale.git . && git checkout ${VERSION}
