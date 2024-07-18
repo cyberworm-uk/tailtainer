@@ -7,6 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  DOCKERHUB_USERNAME: cyberwormuk
 
 jobs:
   ghcr_publish:
@@ -36,7 +37,9 @@ jobs:
           file: ./Containerfile
           platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7
           push: true
-          tags: ${{ env.REGISTRY }}/${{ github.actor }}/tailscale:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.actor }}/tailscale:latest
+            ${{ env.DOCKERHUB_USERNAME }}/tailscale:latest
 
       - name: Build and push tailscale-min
         uses: docker/build-push-action@v5
@@ -46,4 +49,6 @@ jobs:
           file: ./Containerfile.minimal
           platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7
           push: true
-          tags: ${{ env.REGISTRY }}/${{ github.actor }}/tailscale-min:latest
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.actor }}/tailscale-min:latest
+            ${{ env.DOCKERHUB_USERNAME }}/tailscale-min:latest
