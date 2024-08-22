@@ -13,6 +13,7 @@ FROM docker.io/library/alpine:latest
 LABEL org.opencontainers.image.base.name="docker.io/library/alpine"
 LABEL org.opencontainers.image.title="Tailscale (Minimal)"
 LABEL org.opencontainers.image.description="Tailscale Container with minimal functionality (no AWS, etc)"
+LABEL org.opencontainers.image.source="https://github.com/cyberworm-uk/tailtainer"
 RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables iputils && ln -s /usr/local/bin/tailscaled /usr/local/bin/tailscale && ln -s /usr/local/bin/containerboot /run.sh
 COPY --from=build /go/src/tailscaled /usr/local/bin/
 COPY --from=build /go/src/containerboot /usr/local/bin/
