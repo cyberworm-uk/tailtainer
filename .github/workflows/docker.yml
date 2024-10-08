@@ -11,6 +11,11 @@ env:
 
 jobs:
   ghcr_publish:
+    permissions:
+      id-token: write
+      packages: write
+      contents: read
+      attestations: write
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -37,24 +42,42 @@ jobs:
 
       - name: Build and push tailscale
         uses: docker/build-push-action@v6
+        id: push
         env:
           SOURCE_DATE_EPOCH: 0
         with:
           file: ./Containerfile
-          platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64/v8
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ github.actor }}/tailscale:latest
             ${{ env.DOCKERHUB_USERNAME }}/tailscale:latest
 
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        id: attest
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ github.actor }}/tailscale
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
       - name: Build and push tailscale-min
         uses: docker/build-push-action@v6
+        id: pushmin
         env:
           SOURCE_DATE_EPOCH: 0
         with:
           file: ./Containerfile.minimal
-          platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7
+          platforms: linux/amd64,linux/arm64/v8
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ github.actor }}/tailscale-min:latest
             ${{ env.DOCKERHUB_USERNAME }}/tailscale-min:latest
+
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        id: attestmin
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ github.actor }}/tailscale-min
+          subject-digest: ${{ steps.pushmin.outputs.digest }}
+          push-to-registry: true
